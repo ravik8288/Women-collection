@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="View our frequently asked questions about orders, payments, and returns." />
+    <title>FAQ — women.collection.in</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="src/index.css" />
+
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+    <script src="products-data.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="header-mount"></div>
+
+      <!-- FAQ Main Layout -->
+      <main class="faq-page container" style="margin-top: 40px;">
+        <section class="faq-hero">
+          <p class="faq-pill">Support center</p>
+          <h1>Frequently asked questions in a<br />cleaner, more premium layout.</h1>
+          <p>The FAQ now feels more editorial and easier to scan, with an accordion that works cleanly on the refreshed design.</p>
+        </section>
+
+        <div class="faq-groups" id="faq-mount"></div>
+      </main>
+
+      <div id="footer-mount"></div>
+    </div>
+
+    <!-- FAQ accordion controller script -->
+    <script>
+      (function() {
+        const groups = [
+          {
+            title: "Ordering and payment",
+            questions: [
+              ["What payment methods do you accept?", "We accept major credit cards, PayPal, and Apple Pay. Transactions are processed securely."],
+              ["Can I modify or cancel my order?", "You can request changes shortly after placing the order. Use the contact page with your order details and we will help where possible."],
+            ],
+          },
+          {
+            title: "Shipping and delivery",
+            questions: [
+              ["How long does shipping take?", "Standard delivery usually takes 3 to 5 business days, depending on destination and order timing."],
+              ["Do you offer international shipping?", "Yes. Delivery times and customs handling can vary based on the destination country."],
+            ],
+          },
+          {
+            title: "Returns and exchanges",
+            questions: [
+              ["What is your return policy?", "Unused items in original condition can be reviewed for return eligibility. Contact support for the latest process."],
+            ],
+          },
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const mount = document.getElementById("faq-mount");
+          if (!mount) return;
+
+          mount.innerHTML = groups.map((group, groupIdx) => `
+            <section class="faq-group">
+              <p class="faq-group-title">${group.title}</p>
+              <div class="faq-list">
+                ${group.questions.map(([question, answer], questionIdx) => {
+                  const id = `${groupIdx}-${questionIdx}`;
+                  return `
+                    <div class="faq-row" id="faq-row-${id}">
+                      <button type="button" class="faq-toggle-btn" data-id="${id}">
+                        <span>${question}</span>
+                        <i aria-hidden="true"></i>
+                      </button>
+                      <div class="faq-answer" id="faq-answer-${id}">
+                        <p>${answer}</p>
+                      </div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </section>
+          `).join("");
+
+          // Accordion Event Listener
+          mount.addEventListener("click", (e) => {
+            const btn = e.target.closest(".faq-toggle-btn");
+            if (btn) {
+              const id = btn.getAttribute("data-id");
+              const row = document.getElementById(`faq-row-${id}`);
+              const isOpen = row.classList.contains("is-open");
+
+              // Close all open rows first to act as a proper accordion
+              mount.querySelectorAll(".faq-row").forEach(r => r.classList.remove("is-open"));
+
+              // Toggle click target
+              if (!isOpen) {
+                row.classList.add("is-open");
+              }
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

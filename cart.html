@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Your shopping bag selection and order totals." />
+    <title>Shopping Cart — women.collection.in</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="src/index.css" />
+
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+    <script src="products-data.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="header-mount"></div>
+
+      <!-- Main Cart View -->
+      <main class="cart-page" id="cart-container"></main>
+
+      <div id="footer-mount"></div>
+    </div>
+
+    <!-- Cart Management Script -->
+    <script>
+      (function() {
+        // Use relative base paths to support direct file loading (file:///), localhost, and sub-folders
+        const base = "";
+        let cartItem = null;
+        let discountApplied = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+          cartItem = window.readCart();
+          renderCartLayout();
+        });
+
+        function renderCartLayout() {
+          const mount = document.getElementById("cart-container");
+          if (!mount) return;
+
+          if (!cartItem) {
+            mount.className = "page container cart-empty";
+            mount.innerHTML = `
+              <p class="eyebrow gold">Your selection</p>
+              <h1>Your shopping bag is empty.</h1>
+              <p>Discover a statement look from our latest premium edit.</p>
+              <a class="button gold-button" href="index.html">Continue Shopping</a>
+            `;
+            return;
+          }
+
+          mount.className = "cart-page";
+          const subtotal = Number(cartItem.price) * cartItem.quantity;
+          const discountVal = discountApplied ? subtotal * 0.15 : 0;
+          const finalTotal = subtotal - discountVal;
+
+          mount.innerHTML = `
+            <section class="cart-intro">
+              <p class="cart-pill">Order review</p>
+              <h1>Your cart, presented in a cleaner premium layout.</h1>
+              <p>The order summary now feels more polished and trustworthy, with clearer totals and<br /> stronger checkout emphasis.</p>
+            </section>            <div class="cart-layout" style="display: flex; gap: 40px; align-items: start; flex-wrap: wrap; justify-content: center;">
+              <!-- Left Column (774px) -->
+              <div class="cart-column" style="flex: 1; min-width: min(100%, 774px); max-width: 774px; margin: 0;">
+                <section class="cart-review-panel" style="height: auto;">
+                  <div class="cart-product">
+                    <img src="${cartItem.image}" alt="${cartItem.name}" />
+                    <div class="cart-product-copy">
+                      <p>Selected look</p>
+                      <h2>${cartItem.name}</h2>
+                      <span>Product ID: #${String(cartItem.id).padStart(3, "0")}</span>
+                    </div>
+                    <strong>₹${Number(cartItem.price).toFixed(2)}</strong>
+                  </div>
+
+                  <div class="cart-divider"></div>
+
+                  <div class="cart-quantity">
+                    <div><p>Quantity</p><span>Update the quantity before you continue.</span></div>
+                    <div class="cart-stepper">
+                      <button id="cart-qty-dec">−</button>
+                      <span id="cart-qty-val">${cartItem.quantity}</span>
+                      <button id="cart-qty-inc">+</button>
+                    </div>
+                  </div>
+
+                  <div class="cart-divider"></div>
+
+                  <!-- Promo Code Panel -->
+                  <div style="padding: 15px 0; display: flex; flex-direction: column; gap: 10px;">
+                    <div><p style="margin: 0; font-size: 14px; font-weight: 700; color: var(--navy);">Apply Coupon Code</p><span style="font-size: 11px; color: var(--muted);">Type FESTIVE15 to unlock your sponsor discount.</span></div>
+                    <div style="display: flex; gap: 10px;">
+                      <input id="coupon-input" type="text" placeholder="Enter coupon" value="${discountApplied ? "FESTIVE15" : ""}" style="flex: 1; padding: 10px 16px; border: 1px solid var(--line, #e5e7eb); border-radius: 8px; font-family: 'Manrope'; text-transform: uppercase;" />
+                      <button id="apply-coupon-btn" style="background: var(--navy, #151d30); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">Apply</button>
+                    </div>
+                    <div id="coupon-message" style="font-size: 11px; font-weight: bold; color: ${discountApplied ? "#10b981" : "#ef4444"};">
+                      ${discountApplied ? "15% off applied successfully! ✓" : ""}
+                    </div>
+                  </div>
+
+                  <div class="cart-divider"></div>
+
+                  <div class="cart-totals">
+                    <div><p>Subtotal</p><strong>₹${subtotal.toFixed(2)}</strong></div>
+                    <div><p>Discount</p><strong style="color: #10b981;">-₹${discountVal.toFixed(2)}</strong></div>
+                    <div><p>Total</p><strong>₹${finalTotal.toFixed(2)}</strong></div>
+                  </div>
+                </section>
+
+                <!-- Banner 2 Display ad -->
+                <div class="ad-container-outer" style="margin: 32px auto 0 auto; display: flex; justify-content: center; align-items: center; width: 100%;">
+                  <div id="div-gpt-ad-1782805720228-0" style="min-width: 300px; min-height: 50px; margin: 0 auto; display: flex; justify-content: center; align-items: center;"></div>
+                </div>
+
+                <section class="checkout-panel" style="height: auto;">
+                  <p>Ready to continue</p>
+                  <h2>Proceed with a more premium checkout experience.</h2>
+                  <span>This refreshed checkout keeps the same flow but now looks calmer, more modern, and more credible.</span>
+                  <a class="checkout-link" id="proceed-checkout-btn" href="${base}checkout.html">Proceed to Checkout</a>
+                </section>
+              </div>
+
+            </div>        </div>
+          `;
+
+          // BIND QUANTITY CONTROLS
+          document.getElementById("cart-qty-dec").addEventListener("click", () => {
+            changeQuantity(cartItem.quantity - 1);
+          });
+          document.getElementById("cart-qty-inc").addEventListener("click", () => {
+            changeQuantity(cartItem.quantity + 1);
+          });
+
+          // BIND COUPON CONTROLS
+          document.getElementById("apply-coupon-btn").addEventListener("click", () => {
+            const val = document.getElementById("coupon-input").value.trim().toUpperCase();
+            const msg = document.getElementById("coupon-message");
+            if (val === "FESTIVE15") {
+              discountApplied = true;
+              msg.innerText = "15% off applied successfully! ✓";
+              msg.style.color = "#10b981";
+              renderCartLayout(); // Recalculate layout
+            } else {
+              discountApplied = false;
+              msg.innerText = "Invalid coupon code.";
+              msg.style.color = "#ef4444";
+              renderCartLayout();
+            }
+          });
+
+          // Render page-level display ad
+          window.renderAdSlot("banner2", "div-gpt-ad-1782805720228-0");
+          window.renderAdSlot("banner3", "div-gpt-ad-cart-sidebar");
+        }
+
+        function changeQuantity(nextQuantity) {
+          const qty = Math.max(1, nextQuantity);
+          cartItem.quantity = qty;
+          window.writeCart(cartItem);
+          renderCartLayout();
+        }
+      })();
+    </script>
+  </body>
+</html>

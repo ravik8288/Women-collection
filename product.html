@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="View product specifications and add to shopping bag." />
+    <title>Outfit details — women.collection.in</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="src/index.css" />
+
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+    <script src="products-data.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="header-mount"></div>
+
+      <!-- Main Product Display -->
+      <main class="look-page" id="product-container"></main>
+
+      <div id="footer-mount"></div>
+    </div>
+
+    <!-- 1. Sponsor ad cart-lock overlay (RewardedAdModal clone) -->
+    <div id="sponsor-ad-overlay" style="position: fixed; inset: 0; zIndex: 999999; background: rgba(21, 29, 48, 0.92); backdropFilter: blur(12px); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 24px; color: #fff; font-family: 'Manrope', sans-serif;">
+      <div class="rewarded-ad-box">
+        <div id="div-gpt-ad-1782806472842-0" style="min-width: 300px; min-height: 50px;"></div>
+      </div>
+      <div class="rewarded-title" id="rewarded-title">Loading Sponsor Ad...</div>
+      <button id="rewarded-ad-close-btn" disabled style="margin-top: 20px; padding: 14px 28px; fontSize: 12px; fontWeight: 700; letterSpacing: 0.08em; color: #ffffff; background: #4a5368; border: 1px solid var(--gold, #b98a4b); borderRadius: 999px; cursor: not-allowed; transition: all 0.3s ease; textTransform: uppercase; fontFamily: 'Manrope', sans-serif;">
+        Unlocking product in 3s...
+      </button>
+    </div>
+
+    <!-- Product script -->
+    <script>
+      (function() {
+        // Use relative base paths to support direct file loading (file:///), localhost, and sub-folders
+        const base = "";
+        let activePhoto = 0;
+        let selectedQuantity = 1;
+        let product = null;
+        let rewardedAdSlot = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const params = new URLSearchParams(window.location.search);
+          const slug = params.get("slug");
+          product = window.getProduct(slug);
+
+          if (!product) {
+            renderNotFound();
+            return;
+          }
+
+          // Update page title
+          document.title = `${product.name} — women.collection.in`;
+
+          renderProductLayout();
+          initializeInterstitialAd();
+        });
+
+        function renderNotFound() {
+          const mount = document.getElementById("product-container");
+          mount.className = "page container cart-empty";
+          mount.innerHTML = `
+            <p class="eyebrow gold">Product unavailable</p>
+            <h1>This look has left the collection.</h1>
+            <a class="button gold-button" href="index.html">Return to collection</a>
+          `;
+        }
+
+        function renderProductLayout() {
+          const mount = document.getElementById("product-container");
+          const paragraphs = product.description.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+          const related = window.products
+            .filter(item => item.slug !== product.slug && item.category === product.category)
+            .slice(0, 4);
+
+          const remoteGallery = product.gallery.length ? product.gallery : [product.image];
+          const images = [product.image, ...remoteGallery.filter(img => img !== product.image)];
+
+          let thumbStripMarkup = "";
+          if (images.length > 1) {
+            thumbStripMarkup = `
+              <div class="thumb-strip">
+                ${images.map((img, idx) => `
+                  <button class="thumb-btn ${idx === activePhoto ? "selected" : ""}" data-idx="${idx}">
+                    <img src="${img}" alt="" />
+                  </button>
+                `).join("")}
+              </div>
+            `;
+          }
+
+          mount.innerHTML = `
+            <div class="container">
+              <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="index.html">Home</a><span>›</span>
+                <a href="category.html?cat=${product.category}">${product.categoryName}</a><span>›</span>
+                <span>${product.name}</span>
+              </nav>
+
+              <article class="look-shell">
+                <section class="look-visuals" aria-label="Product gallery">
+                  <div class="product-gallery">
+                    <img id="main-product-img" src="${images[activePhoto]}" alt="${product.name} — view 1" />
+                    ${images.length > 1 ? `
+                      <button class="prev" id="gallery-prev-btn">‹</button>
+                      <button class="next" id="gallery-next-btn">›</button>
+                    ` : ""}
+                    <span class="image-count" id="gallery-counter">1 / ${images.length}</span>
+                  </div>
+                  ${thumbStripMarkup}
+                </section>
+
+                <section class="product-info">
+                  <p class="look-category">${product.categoryName}</p>
+                  <h1>${product.name}</h1>
+                  <div class="look-price-row">
+                    <p class="price">₹${product.price}.00</p>
+                    <span>Inclusive of all taxes</span>
+                  </div>
+                  <p class="look-intro">${paragraphs[0]}</p>
+
+                  <div class="purchase-box">
+                    <div>
+                      <span class="control-label">Quantity</span>
+                      <div class="quantity">
+                        <button id="qty-dec-btn">−</button>
+                        <span id="qty-value">${selectedQuantity}</span>
+                        <button id="qty-inc-btn">+</button>
+                      </div>
+                    </div>
+                    <button class="button gold-button add-cart" id="add-to-cart-trigger">
+                      Add to Cart
+                    </button>
+                  </div>
+
+                  <!-- Banner 1 Slot -->
+                  <div class="ad-container-outer" style="margin: 15px 0; display: flex; justify-content: center; width: 100%;">
+                    <div id="div-gpt-ad-1782805288205-0" style="min-width: 300px; min-height: 50px;"></div>
+                  </div>
+
+                  <div class="service-grid">
+                    <div><b>Premium finish</b><span>Carefully selected presentation</span></div>
+                    <div><b>Quick support</b><span>Help with sizing and orders</span></div>
+                    <div><b>Secure checkout</b><span>A smooth purchase journey</span></div>
+                  </div>
+
+                  <dl class="look-meta">
+                    <div><dt>Category</dt><dd>${product.categoryName}</dd></div>
+                    <div><dt>Product ID</dt><dd>#${product.id}</dd></div>
+                    <div><dt>Availability</dt><dd>In stock</dd></div>
+                  </dl>
+                </section>
+              </article>
+
+              <section class="description-panel">
+                <div><p class="eyebrow">The details</p><h2>Product description</h2></div>
+                <div class="description-copy">
+                  ${paragraphs.map(p => `<p>${p}</p>`).join("")}
+                </div>
+              </section>
+
+              <!-- Banner 2 Slot -->
+              <div class="ad-container-outer" style="margin: 15px 0; display: flex; justify-content: center; width: 100%;">
+                <div id="div-gpt-ad-1782805720228-0" style="min-width: 300px; min-height: 50px;"></div>
+              </div>
+
+              <section class="related">
+                <div class="section-head">
+                  <div><p class="eyebrow gold">Complete the edit</p><h2>You Might Also Like</h2></div>
+                  <a href="category.html?cat=${product.category}">View collection</a>
+                </div>
+                <div class="product-grid">
+                  ${related.map(p => `
+                    <article class="product-card">
+                      <a class="product-image" href="product.html?slug=${p.slug}">
+                        <span>Featured</span>
+                        <img src="${p.image}" alt="${p.name}" />
+                      </a>
+                      <p class="eyebrow">${p.categoryName}</p>
+                      <h3>${p.name}</h3>
+                      <div class="card-row">
+                        <strong>₹${p.price}</strong>
+                        <a href="product.html?slug=${p.slug}">View Look <span>→</span></a>
+                      </div>
+                    </article>
+                  `).join("")}
+                </div>
+              </section>
+
+              <!-- Banner 3 Slot -->
+              <div class="ad-container-outer" style="margin: 15px 0; display: flex; justify-content: center; width: 100%;">
+                <div id="div-gpt-ad-1782806188858-0" style="min-width: 300px; min-height: 50px;"></div>
+              </div>
+            </div>
+          `;
+
+          // BIND GALLERY CONTROLS
+          const mainImg = document.getElementById("main-product-img");
+          const counter = document.getElementById("gallery-counter");
+          
+          const prevBtn = document.getElementById("gallery-prev-btn");
+          const nextBtn = document.getElementById("gallery-next-btn");
+
+          if (prevBtn && nextBtn) {
+            prevBtn.addEventListener("click", () => {
+              activePhoto = (activePhoto - 1 + images.length) % images.length;
+              mainImg.src = images[activePhoto];
+              counter.innerText = `${activePhoto + 1} / ${images.length}`;
+              updateSelectedThumb();
+            });
+
+            nextBtn.addEventListener("click", () => {
+              activePhoto = (activePhoto + 1) % images.length;
+              mainImg.src = images[activePhoto];
+              counter.innerText = `${activePhoto + 1} / ${images.length}`;
+              updateSelectedThumb();
+            });
+          }
+
+          const thumbContainer = mount.querySelector(".thumb-strip");
+          if (thumbContainer) {
+            thumbContainer.addEventListener("click", (e) => {
+              const btn = e.target.closest(".thumb-btn");
+              if (btn) {
+                activePhoto = Number(btn.getAttribute("data-idx"));
+                mainImg.src = images[activePhoto];
+                counter.innerText = `${activePhoto + 1} / ${images.length}`;
+                updateSelectedThumb();
+              }
+            });
+          }
+
+          function updateSelectedThumb() {
+            mount.querySelectorAll(".thumb-btn").forEach((btn, idx) => {
+              if (idx === activePhoto) btn.classList.add("selected");
+              else btn.classList.remove("selected");
+            });
+          }
+
+          // BIND QUANTITY CONTROLS
+          const qtyVal = document.getElementById("qty-value");
+          const qtyDec = document.getElementById("qty-dec-btn");
+          const qtyInc = document.getElementById("qty-inc-btn");
+
+          if (qtyDec && qtyInc) {
+            qtyDec.addEventListener("click", () => {
+              selectedQuantity = Math.max(1, selectedQuantity - 1);
+              qtyVal.innerText = selectedQuantity;
+            });
+            qtyInc.addEventListener("click", () => {
+              selectedQuantity += 1;
+              qtyVal.innerText = selectedQuantity;
+            });
+          }
+
+          // BIND CART TRIGGER (OPEN SPONSOR MODAL BLOCKER)
+          const cartBtn = document.getElementById("add-to-cart-trigger");
+          if (cartBtn) {
+            cartBtn.addEventListener("click", openSponsorModal);
+          }
+
+          // Render page-level display ads
+          window.renderAdSlot("banner1", "div-gpt-ad-1782805288205-0");
+          window.renderAdSlot("banner2", "div-gpt-ad-1782805720228-0");
+          window.renderAdSlot("banner3", "div-gpt-ad-1782806188858-0");
+        }
+
+        // OUT-OF-PAGE WEB INTERSTITIAL LOAD ON MOUNT
+        function initializeInterstitialAd() {
+          const googletag = window.googletag || { cmd: [] };
+          setTimeout(() => {
+            googletag.cmd.push(() => {
+              const adPath = window.AD_SLOT_PATHS.interstitial;
+              if (!adPath) return;
+
+              const existingSlots = googletag.pubads().getSlots();
+              const hasInterstitial = existingSlots.some(s => s.getSlotPath() === adPath);
+
+              if (!hasInterstitial) {
+                console.log("Product Page Interstitial: Registering interstitial slot");
+                const interstitialSlot = googletag.defineOutOfPageSlot(
+                  adPath,
+                  googletag.enums.OutOfPageFormat.INTERSTITIAL
+                );
+                if (interstitialSlot) {
+                  interstitialSlot.addService(googletag.pubads()).setConfig({
+                    interstitial: {
+                      triggers: {
+                        navBar: true,
+                        unhideWindow: true,
+                      },
+                    },
+                  });
+                  googletag.display(interstitialSlot);
+                  googletag.pubads().refresh([interstitialSlot]);
+                }
+              }
+            });
+          }, 1000);
+        }
+
+        // SPONSOR REWARDED MODAL (div-gpt-ad-1782806472842-0)
+        function openSponsorModal() {
+          const overlay = document.getElementById("sponsor-ad-overlay");
+          const title = document.getElementById("rewarded-title");
+          const closeBtn = document.getElementById("rewarded-ad-close-btn");
+
+          overlay.style.display = "flex";
+          closeBtn.disabled = true;
+          closeBtn.style.background = "#4a5368";
+          closeBtn.style.cursor = "not-allowed";
+
+          let timeLeft = 3;
+          closeBtn.innerText = `Unlocking product in ${timeLeft}s...`;
+          title.innerText = "Loading Sponsor Ad...";
+
+          const googletag = window.googletag || { cmd: [] };
+          const adUnitId = "div-gpt-ad-1782806472842-0";
+
+          googletag.cmd.push(() => {
+            const adPath = window.AD_SLOT_PATHS.rewarded;
+            const adSizes = window.AD_SLOT_SIZES.rewarded;
+
+            const existingSlots = googletag.pubads().getSlots();
+            const existingRewarded = existingSlots.find(s => s.getSlotElementId() === adUnitId);
+            if (existingRewarded) {
+              googletag.destroySlots([existingRewarded]);
+            }
+
+            rewardedAdSlot = googletag.defineSlot(adPath, adSizes, adUnitId);
+            if (rewardedAdSlot) {
+              rewardedAdSlot.addService(googletag.pubads());
+              googletag.display(adUnitId);
+              googletag.pubads().refresh([rewardedAdSlot]);
+            }
+          });
+
+          const handleRenderEnded = (event) => {
+            if (event.slot.getSlotElementId() === adUnitId) {
+              if (event.isEmpty) {
+                title.innerText = "No sponsor ad available. Click below to proceed.";
+                enableProceedBtn();
+              } else {
+                title.innerText = "Sponsor Ad Loaded!";
+              }
+            }
+          };
+
+          googletag.cmd.push(() => {
+            googletag.pubads().addEventListener("slotRenderEnded", handleRenderEnded);
+          });
+
+          // Countdown Timer
+          const timer = setInterval(() => {
+            timeLeft -= 1;
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              enableProceedBtn();
+              if (title.innerText === "Loading Sponsor Ad...") {
+                title.innerText = "No sponsor ad available. Click below to proceed.";
+              }
+            } else {
+              closeBtn.innerText = `Unlocking product in ${timeLeft}s...`;
+            }
+          }, 1000);
+
+          function enableProceedBtn() {
+            clearInterval(timer);
+            closeBtn.disabled = false;
+            closeBtn.innerText = "Add to Cart";
+            closeBtn.style.background = "var(--navy, #151d30)";
+            closeBtn.style.cursor = "pointer";
+            closeBtn.style.boxShadow = "0 10px 25px rgba(21, 29, 48, 0.2)";
+          }
+
+          // Clean up on proceed
+          const onProceed = () => {
+            clearInterval(timer);
+            googletag.cmd.push(() => {
+              googletag.pubads().removeEventListener("slotRenderEnded", handleRenderEnded);
+              if (rewardedAdSlot) {
+                googletag.destroySlots([rewardedAdSlot]);
+              }
+            });
+
+            // Write Cart to LocalStorage
+            window.writeCart({
+              id: product.id,
+              name: product.name,
+              image: product.image,
+              price: product.price,
+              quantity: selectedQuantity
+            });
+
+            overlay.style.display = "none";
+            // Redirect to Cart page
+            window.location.href = `${base}cart.html`;
+          };
+
+          closeBtn.onclick = onProceed;
+        }
+      })();
+    </script>
+  </body>
+</html>

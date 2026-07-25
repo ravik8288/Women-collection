@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Contact our customer support team for orders or styling help." />
+    <title>Contact Us — women.collection.in</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="src/index.css" />
+
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+    <script src="products-data.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="header-mount"></div>
+
+      <!-- Contact Main Content -->
+      <main class="contact-page container" style="margin-top: 40px;">
+        <section class="contact-hero">
+          <div class="contact-hero-copy">
+            <p class="contact-pill">Contact</p>
+            <h1>Support should feel as premium as the storefront itself.</h1>
+            <p>This page now follows the same elevated visual direction, making support and brand trust feel stronger.</p>
+          </div>
+          <div class="contact-facts">
+            <div><span>Response</span><b>Fast support</b></div>
+            <div><span>Tone</span><b>Professional and clear</b></div>
+          </div>
+        </section>
+
+        <div class="contact-content">
+          <section class="contact-form-panel" id="form-container">
+            <h2>Send us a message</h2>
+            <p>Use the form below for order questions, sizing help, or delivery support.</p>
+            <form id="contact-form">
+              <label htmlFor="contact-name">Full Name<input id="contact-name" name="name" required /></label>
+              <label htmlFor="contact-email">Email Address<input id="contact-email" name="email" type="email" required /></label>
+              <label htmlFor="contact-message">Message<textarea id="contact-message" name="message" rows="6" required></textarea></label>
+              <button class="contact-submit" type="submit">Send Message</button>
+            </form>
+          </section>
+
+          <aside class="contact-side">
+            <section class="contact-info-panel">
+              <p class="contact-label">Contact information</p>
+              <h3>Address</h3><p>123 Artisan Lane<br />Craftsville, CA 90210<br />USA</p>
+              <h3>Phone</h3><p>+1 (555) 123-4567</p>
+              <h3>Email</h3><p>support@theartisan.shop</p>
+            </section>
+            <section class="contact-hours-panel">
+              <p class="contact-label">Hours</p>
+              <h3>Available Monday to Friday</h3>
+              <p>9:00 AM to 5:00 PM (PST)</p>
+            </section>
+          </aside>
+        </div>
+      </main>
+
+      <div id="footer-mount"></div>
+    </div>
+
+    <!-- Contact Form Controller script -->
+    <script>
+      (function() {
+        document.addEventListener("DOMContentLoaded", () => {
+          const form = document.getElementById("contact-form");
+          const container = document.getElementById("form-container");
+
+          if (form && container) {
+            form.addEventListener("submit", (e) => {
+              e.preventDefault();
+              container.innerHTML = `
+                <div class="contact-success">
+                  <h3>Message received</h3>
+                  <p>Thank you. We will get back to you shortly.</p>
+                  <button type="button" id="send-another-btn">Send another message</button>
+                </div>
+              `;
+
+              document.getElementById("send-another-btn").addEventListener("click", () => {
+                window.location.reload();
+              });
+            });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

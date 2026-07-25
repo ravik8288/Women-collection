@@ -1,0 +1,12 @@
+{
+  "name": "jobstola-vanilla-html",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.1.1"
+  }
+}

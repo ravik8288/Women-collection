@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Browse collection by category edits." />
+    <title>Edits Collection — women.collection.in</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="src/index.css" />
+
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+    <script src="products-data.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="header-mount"></div>
+
+      <!-- Main Category Collection -->
+      <main class="collection container" style="margin-top: 40px;">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow gold" id="cat-eyebrow">Edits Collection</p>
+            <h2 id="cat-title">Browse Collection</h2>
+            <p id="cat-description">Explore our curated selections with elevated presentations.</p>
+          </div>
+          <a href="index.html">View all pieces <span>→</span></a>
+        </div>
+
+        <div class="product-grid" id="category-grid"></div>
+      </main>
+
+      <div id="footer-mount"></div>
+    </div>
+
+    <!-- Category script -->
+    <script>
+      (function() {
+        // Use relative base paths to support direct file loading (file:///), localhost, and sub-folders
+        const base = "";
+        
+        document.addEventListener("DOMContentLoaded", () => {
+          const params = new URLSearchParams(window.location.search);
+          const catSlug = params.get("cat");
+          const category = window.getCategory(catSlug);
+
+          if (!category) {
+            document.getElementById("cat-title").innerText = "Category Collection Not Found";
+            return;
+          }
+
+          // Update page title and headings
+          document.title = `${category.name} Collection — women.collection.in`;
+          document.getElementById("cat-eyebrow").innerText = "Curated category edit";
+          document.getElementById("cat-title").innerText = `${category.name}`;
+          document.getElementById("cat-description").innerText = `Explore our curated selection of signature ${category.name.toLowerCase()} outfits.`;
+
+          // Filter products
+          const products = window.products || [];
+          const filtered = products.filter(p => p.category === catSlug);
+
+          const grid = document.getElementById("category-grid");
+          if (grid) {
+            if (filtered.length === 0) {
+              grid.innerHTML = `<p class="muted" style="grid-column: 1/-1; text-align: center; padding: 40px 0;">No outfits found in this category.</p>`;
+              return;
+            }
+
+            // Build category product cards matching index.css exactly
+            grid.innerHTML = filtered.map(p => `
+              <article class="product-card category-product-card">
+                <a class="product-image" href="product.html?slug=${p.slug}">
+                  <span>${category.name}</span>
+                  <img src="${p.image}" alt="${p.name}" />
+                </a>
+                <h3>${p.name}</h3>
+                <div class="card-row">
+                  <strong>₹${p.price}</strong>
+                  <a href="product.html?slug=${p.slug}">View Look <span>→</span></a>
+                </div>
+              </article>
+            `).join("");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
