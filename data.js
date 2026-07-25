@@ -109,7 +109,8 @@
         banner3: "/6355419/Travel/Europe",
         interstitial: "/6355419/Travel/Europe/Italy",
         anchor: "/6355419/Travel",
-        rewarded: "/22601054/gift-cards",
+        rewarded: "/22639388115/rewarded_web_example",
+        sponsorBanner: "/6355419/Travel/Europe/France/Paris",
         headerBanner: "/6355419/Travel/Europe/France/Paris",
         footerBanner: "/6355419/Travel/Europe/France",
       }
@@ -120,6 +121,7 @@
         interstitial: "/22846411849,23358456112/JBM_parivahanindia.com_Inter_new",
         anchor: "/22846411849,23358456112/JBM_parivahanindia.com_Anchor_new",
         rewarded: "/22846411849,23358456112/JBM_parivahanindia.com_Rewarded_new",
+        sponsorBanner: "/22846411849,23358456112/JBM_parivahanindia.com_Banner1_new",
         headerBanner: "/22846411849,23358456112/JBM_parivahanindia.com_Banner1_new",
         footerBanner: "/22846411849,23358456112/JBM_parivahanindia.com_Banner2_new",
       };
@@ -131,6 +133,7 @@
     interstitial: [[1, 1], [300, 250], [320, 480], [480, 320], [336, 280]],
     anchor: [[320, 50], [728, 90], [320, 100], "fluid"],
     rewarded: [[480, 320], [300, 100], [300, 75], [300, 50], [320, 480]],
+    sponsorBanner: [[300, 250], [336, 280], "fluid"],
     headerBanner: [[300, 250], [336, 280], "fluid"],
     footerBanner: [[300, 250], [336, 280], "fluid"],
   };

@@ -1,4 +1,4 @@
-// Shared Layout and Ad Controller for Vanilla HTML Storefront
+// Shared Layout Controller for Vanilla HTML Storefront
 
 (function() {
   // Use relative base paths to support direct file loading (file:///), localhost, and sub-folders
@@ -9,44 +9,15 @@
     return pageName;
   };
 
-  let anchorSlot;
-  const googletag = window.googletag || { cmd: [] };
-
-  googletag.cmd.push(() => {
-    const anchorPath = window.AD_SLOT_PATHS.anchor;
-    anchorSlot = googletag.defineOutOfPageSlot(
-      anchorPath,
-      document.body.clientWidth <= 500
-        ? googletag.enums.OutOfPageFormat.TOP_ANCHOR
-        : googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
-    );
-
-    if (anchorSlot) {
-      anchorSlot.addService(googletag.pubads()).setConfig({
-        targeting: {
-          test: "anchor"
-        }
-      });
-    }
-
-    googletag.setConfig({
-      singleRequest: true
-    });
-
-    googletag.enableServices();
-  });
+  // Initialize Ad Manager and define the anchor slot early (before enableServices)
+  AdManager.init();
+  AdManager.initAnchor();
 
   // Inject Header and Footer on load
   document.addEventListener("DOMContentLoaded", () => {
     injectHeader();
     injectFooter();
     updateCartCount();
-
-    googletag.cmd.push(() => {
-      if (anchorSlot) {
-        googletag.display(anchorSlot);
-      }
-    });
 
     // Listen to custom cart update events
     window.addEventListener("cartUpdated", updateCartCount);
@@ -177,7 +148,7 @@
     }
 
     // Load header banner ad slot dynamically
-    window.renderAdSlot("headerBanner", "div-gpt-ad-header-banner1");
+    AdManager.renderBanner("headerBanner", "div-gpt-ad-header-banner1");
   }
 
   function injectFooter() {
@@ -222,7 +193,7 @@
     `;
 
     // Load footer banner ad slot dynamically
-    window.renderAdSlot("footerBanner", "div-gpt-ad-footer-banner2");
+    AdManager.renderBanner("footerBanner", "div-gpt-ad-footer-banner2");
   }
 
   function updateCartCount() {
@@ -240,49 +211,4 @@
     }
   }
 
-  // Reusable function to request standard display ad slots programmatically
-  window.renderAdSlot = (type, id) => {
-    const googletag = window.googletag || { cmd: [] };
-    googletag.cmd.push(() => {
-      if (!window.gptInitialized) {
-        googletag.pubads().enableSingleRequest();
-        googletag.enableServices();
-        window.gptInitialized = true;
-      }
-
-      const adPath = window.AD_SLOT_PATHS[type];
-      const adSizes = window.AD_SLOT_SIZES[type];
-      if (!adPath || !adSizes) return;
-
-      const existingSlots = googletag.pubads().getSlots();
-      const existingSlot = existingSlots.find(s => s.getSlotElementId() === id);
-      if (existingSlot) {
-        googletag.destroySlots([existingSlot]);
-      }
-
-      const slot = googletag.defineSlot(adPath, adSizes, id);
-      if (slot) {
-        slot.addService(googletag.pubads());
-        googletag.display(id);
-        googletag.pubads().refresh([slot]);
-      }
-    });
-
-    const handleSlotRender = (event) => {
-      if (event.slot.getSlotElementId() === id) {
-        const container = document.getElementById(id);
-        if (container && event.isEmpty) {
-          container.style.display = "none";
-          const wrapper = container.parentElement;
-          if (wrapper && (wrapper.classList.contains("header-ad-wrapper") || wrapper.classList.contains("footer-ad-wrapper"))) {
-            wrapper.style.display = "none";
-          }
-        }
-      }
-    };
-
-    googletag.cmd.push(() => {
-      googletag.pubads().addEventListener("slotRenderEnded", handleSlotRender);
-    });
-  };
 })();

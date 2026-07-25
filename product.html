@@ -14,6 +14,7 @@
     <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
     <script src="products-data.js"></script>
     <script src="data.js"></script>
+    <script src="js/ad-manager.js"></script>
     <script src="main.js"></script>
   </head>
   <body>
@@ -26,26 +27,24 @@
       <div id="footer-mount"></div>
     </div>
 
-    <!-- 1. Sponsor ad cart-lock overlay (RewardedAdModal clone) -->
-    <div id="sponsor-ad-overlay" style="position: fixed; inset: 0; zIndex: 999999; background: rgba(21, 29, 48, 0.92); backdropFilter: blur(12px); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 24px; color: #fff; font-family: 'Manrope', sans-serif;">
-      <div class="rewarded-ad-box">
-        <div id="div-gpt-ad-1782806472842-0" style="min-width: 300px; min-height: 50px;"></div>
+    <!-- Sponsor Ad Cart-Lock Overlay -->
+    <div id="sponsor-ad-overlay" style="position: fixed; inset: 0; z-index: 999999; background: rgba(21, 29, 48, 0.92); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; color: #fff; font-family: 'Manrope', sans-serif;">
+      <div class="rewarded-ad-box" style="background: #ffffff; padding: 10px; border-radius: 12px; display: flex; justify-content: center; align-items: center;">
+        <div id="div-gpt-ad-1782806472842-0" style="min-width: 300px; min-height: 250px;"></div>
       </div>
       <div class="rewarded-title" id="rewarded-title">Loading Sponsor Ad...</div>
-      <button id="rewarded-ad-close-btn" disabled style="margin-top: 20px; padding: 14px 28px; fontSize: 12px; fontWeight: 700; letterSpacing: 0.08em; color: #ffffff; background: #4a5368; border: 1px solid var(--gold, #b98a4b); borderRadius: 999px; cursor: not-allowed; transition: all 0.3s ease; textTransform: uppercase; fontFamily: 'Manrope', sans-serif;">
+      <button id="rewarded-ad-close-btn" disabled style="margin-top: 10px; padding: 14px 28px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #ffffff; background: #4a5368; border: 1px solid var(--gold, #b98a4b); border-radius: 999px; cursor: not-allowed; transition: all 0.3s ease; text-transform: uppercase; font-family: 'Manrope', sans-serif;">
         Unlocking product in 3s...
       </button>
     </div>
 
-    <!-- Product script -->
+    <!-- Product Logic & Ad Management Script -->
     <script>
       (function() {
-        // Use relative base paths to support direct file loading (file:///), localhost, and sub-folders
         const base = "";
         let activePhoto = 0;
         let selectedQuantity = 1;
         let product = null;
-        let rewardedAdSlot = null;
 
         document.addEventListener("DOMContentLoaded", () => {
           const params = new URLSearchParams(window.location.search);
@@ -57,11 +56,10 @@
             return;
           }
 
-          // Update page title
           document.title = `${product.name} — women.collection.in`;
 
           renderProductLayout();
-          initializeInterstitialAd();
+          setupInterstitialAd();
         });
 
         function renderNotFound() {
@@ -195,17 +193,16 @@
                 </div>
               </section>
 
-              <!-- Banner 3 Slot -->
-              <div class="ad-container-outer" style="margin: 15px 0; display: flex; justify-content: center; width: 100%;">
+              <!-- Banner 3 Slot Container -->
+              <div class="ad-container-outer" style="margin: 24px 0; display: flex; justify-content: center; width: 100%;">
                 <div id="div-gpt-ad-1782806188858-0" style="min-width: 300px; min-height: 50px;"></div>
               </div>
             </div>
           `;
 
-          // BIND GALLERY CONTROLS
+          // Gallery Controls
           const mainImg = document.getElementById("main-product-img");
           const counter = document.getElementById("gallery-counter");
-          
           const prevBtn = document.getElementById("gallery-prev-btn");
           const nextBtn = document.getElementById("gallery-next-btn");
 
@@ -245,7 +242,7 @@
             });
           }
 
-          // BIND QUANTITY CONTROLS
+          // Quantity Controls
           const qtyVal = document.getElementById("qty-value");
           const qtyDec = document.getElementById("qty-dec-btn");
           const qtyInc = document.getElementById("qty-inc-btn");
@@ -261,53 +258,25 @@
             });
           }
 
-          // BIND CART TRIGGER (OPEN SPONSOR MODAL BLOCKER)
+          // Cart Trigger
           const cartBtn = document.getElementById("add-to-cart-trigger");
           if (cartBtn) {
             cartBtn.addEventListener("click", openSponsorModal);
           }
 
-          // Render page-level display ads
-          window.renderAdSlot("banner1", "div-gpt-ad-1782805288205-0");
-          window.renderAdSlot("banner2", "div-gpt-ad-1782805720228-0");
-          window.renderAdSlot("banner3", "div-gpt-ad-1782806188858-0");
+          // RENDER DISPLAY BANNERS (Banner 1, Banner 2, and Banner 3)
+          AdManager.renderBanner("banner1", "div-gpt-ad-1782805288205-0");
+          AdManager.renderBanner("banner2", "div-gpt-ad-1782805720228-0");
+          AdManager.renderBanner("banner3", "div-gpt-ad-1782806188858-0");
         }
 
-        // OUT-OF-PAGE WEB INTERSTITIAL LOAD ON MOUNT
-        function initializeInterstitialAd() {
-          const googletag = window.googletag || { cmd: [] };
-          setTimeout(() => {
-            googletag.cmd.push(() => {
-              const adPath = window.AD_SLOT_PATHS.interstitial;
-              if (!adPath) return;
-
-              const existingSlots = googletag.pubads().getSlots();
-              const hasInterstitial = existingSlots.some(s => s.getSlotPath() === adPath);
-
-              if (!hasInterstitial) {
-                console.log("Product Page Interstitial: Registering interstitial slot");
-                const interstitialSlot = googletag.defineOutOfPageSlot(
-                  adPath,
-                  googletag.enums.OutOfPageFormat.INTERSTITIAL
-                );
-                if (interstitialSlot) {
-                  interstitialSlot.addService(googletag.pubads()).setConfig({
-                    interstitial: {
-                      triggers: {
-                        navBar: true,
-                        unhideWindow: true,
-                      },
-                    },
-                  });
-                  googletag.display(interstitialSlot);
-                  googletag.pubads().refresh([interstitialSlot]);
-                }
-              }
-            });
-          }, 1000);
+        // Interstitial Ad Setup — delegates to AdManager
+        function setupInterstitialAd() {
+          AdManager.initInterstitial();
+          AdManager.enableAndDisplay();
         }
 
-        // SPONSOR REWARDED MODAL (div-gpt-ad-1782806472842-0)
+        // Modal Sponsor Banner — delegates to AdManager
         function openSponsorModal() {
           const overlay = document.getElementById("sponsor-ad-overlay");
           const title = document.getElementById("rewarded-title");
@@ -322,50 +291,30 @@
           closeBtn.innerText = `Unlocking product in ${timeLeft}s...`;
           title.innerText = "Loading Sponsor Ad...";
 
-          const googletag = window.googletag || { cmd: [] };
           const adUnitId = "div-gpt-ad-1782806472842-0";
+          const adContainer = document.getElementById(adUnitId);
+          if (adContainer) adContainer.innerHTML = "";
 
-          googletag.cmd.push(() => {
-            const adPath = window.AD_SLOT_PATHS.rewarded;
-            const adSizes = window.AD_SLOT_SIZES.rewarded;
-
-            const existingSlots = googletag.pubads().getSlots();
-            const existingRewarded = existingSlots.find(s => s.getSlotElementId() === adUnitId);
-            if (existingRewarded) {
-              googletag.destroySlots([existingRewarded]);
-            }
-
-            rewardedAdSlot = googletag.defineSlot(adPath, adSizes, adUnitId);
-            if (rewardedAdSlot) {
-              rewardedAdSlot.addService(googletag.pubads());
-              googletag.display(adUnitId);
-              googletag.pubads().refresh([rewardedAdSlot]);
-            }
-          });
-
-          const handleRenderEnded = (event) => {
-            if (event.slot.getSlotElementId() === adUnitId) {
+          // Use AdManager.renderBanner with a custom onRender callback
+          AdManager.renderBanner("sponsorBanner", adUnitId, {
+            onRender(event) {
               if (event.isEmpty) {
                 title.innerText = "No sponsor ad available. Click below to proceed.";
                 enableProceedBtn();
               } else {
                 title.innerText = "Sponsor Ad Loaded!";
               }
-            }
-          };
-
-          googletag.cmd.push(() => {
-            googletag.pubads().addEventListener("slotRenderEnded", handleRenderEnded);
+            },
+            hideOnEmpty: false
           });
 
-          // Countdown Timer
           const timer = setInterval(() => {
             timeLeft -= 1;
             if (timeLeft <= 0) {
               clearInterval(timer);
               enableProceedBtn();
               if (title.innerText === "Loading Sponsor Ad...") {
-                title.innerText = "No sponsor ad available. Click below to proceed.";
+                title.innerText = "Sponsor Ad Loaded!";
               }
             } else {
               closeBtn.innerText = `Unlocking product in ${timeLeft}s...`;
@@ -381,17 +330,10 @@
             closeBtn.style.boxShadow = "0 10px 25px rgba(21, 29, 48, 0.2)";
           }
 
-          // Clean up on proceed
           const onProceed = () => {
             clearInterval(timer);
-            googletag.cmd.push(() => {
-              googletag.pubads().removeEventListener("slotRenderEnded", handleRenderEnded);
-              if (rewardedAdSlot) {
-                googletag.destroySlots([rewardedAdSlot]);
-              }
-            });
+            AdManager.destroyBanner(adUnitId);
 
-            // Write Cart to LocalStorage
             window.writeCart({
               id: product.id,
               name: product.name,
@@ -401,7 +343,6 @@
             });
 
             overlay.style.display = "none";
-            // Redirect to Cart page
             window.location.href = `${base}cart.html`;
           };
 

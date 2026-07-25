@@ -14,6 +14,7 @@
     <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
     <script src="products-data.js"></script>
     <script src="data.js"></script>
+    <script src="js/ad-manager.js"></script>
     <script src="main.js"></script>
   </head>
   <body>
@@ -27,24 +28,24 @@
     </div>
 
     <!-- Purchase Success Overlay Modal -->
-    <div id="checkout-success-modal" style="position: fixed; inset: 0; backgroundColor: rgba(21, 29, 48, 0.95); zIndex: 9999999; display: none; alignItems: center; justifyContent: center; backdropFilter: blur(12px); padding: 20px; font-family: 'Manrope', sans-serif;">
-      <div style="width: 100%; maxWidth: 500px; backgroundColor: #ffffff; borderRadius: 28px; padding: 40px; textAlign: center; boxShadow: 0 30px 70px rgba(0,0,0,0.5);">
-        <div style="fontSize: 50px; marginBottom: 16px;">✨</div>
-        <h2 style="fontFamily: 'Cormorant Garamond', serif; fontSize: 32px; color: var(--navy, #151d30); margin: 0 0 12px 0; fontWeight: 600;">Order Placed!</h2>
-        <p style="fontSize: 14px; color: var(--muted, #60738f); lineHeight: 1.6; margin: 0 0 24px 0;">Your purchase has been recorded. Our team is preparing your curated statement looks for shipment.</p>
+    <div id="checkout-success-modal" style="position: fixed; inset: 0; background-color: rgba(21, 29, 48, 0.95); z-index: 9999999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(12px); padding: 20px; font-family: 'Manrope', sans-serif;">
+      <div style="width: 100%; max-width: 500px; background-color: #ffffff; border-radius: 28px; padding: 40px; text-align: center; box-shadow: 0 30px 70px rgba(0,0,0,0.5);">
+        <div style="font-size: 50px; margin-bottom: 16px;">✨</div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--navy, #151d30); margin: 0 0 12px 0; font-weight: 600;">Order Placed!</h2>
+        <p style="font-size: 14px; color: var(--muted, #60738f); line-height: 1.6; margin: 0 0 24px 0;">Your purchase has been recorded. Our team is preparing your curated statement looks for shipment.</p>
         
-        <div style="background: var(--paper, #f6f7fb); borderRadius: 16px; padding: 20px; margin-bottom: 30px; text-align: left; border: 1px solid var(--line, #e5e7eb);">
-          <h4 style="margin: 0 0 10px 0; fontSize: 13px; color: var(--navy); textTransform: uppercase; letterSpacing: 0.05em;">Shipment details</h4>
-          <p id="success-buyer-name" style="margin: 4px 0; fontSize: 13px; color: var(--muted);"></p>
-          <p id="success-buyer-phone" style="margin: 4px 0; fontSize: 13px; color: var(--muted);"></p>
-          <p id="success-buyer-address" style="margin: 4px 0; fontSize: 13px; color: var(--muted);"></p>
+        <div style="background: var(--paper, #f6f7fb); border-radius: 16px; padding: 20px; margin-bottom: 30px; text-align: left; border: 1px solid var(--line, #e5e7eb);">
+          <h4 style="margin: 0 0 10px 0; font-size: 13px; color: var(--navy); text-transform: uppercase; letter-spacing: 0.05em;">Shipment details</h4>
+          <p id="success-buyer-name" style="margin: 4px 0; font-size: 13px; color: var(--muted);"></p>
+          <p id="success-buyer-phone" style="margin: 4px 0; font-size: 13px; color: var(--muted);"></p>
+          <p id="success-buyer-address" style="margin: 4px 0; font-size: 13px; color: var(--muted);"></p>
           <div style="border-top: 1px solid #e5e7eb; margin: 12px 0; padding-top: 12px; display: flex; justify-content: space-between;">
-            <span style="fontSize: 14px; fontWeight: bold; color: var(--navy);">Total paid:</span>
-            <span id="success-buyer-total" style="fontSize: 14px; fontWeight: bold; color: var(--gold);"></span>
+            <span style="font-size: 14px; font-weight: bold; color: var(--navy);">Total paid:</span>
+            <span id="success-buyer-total" style="font-size: 14px; font-weight: bold; color: var(--gold);"></span>
           </div>
         </div>
         
-        <button id="success-home-btn" style="background: var(--navy, #151d30); color: #ffffff; border: none; borderRadius: 999px; padding: 14px 32px; fontSize: 12px; fontWeight: 700; textTransform: uppercase; letterSpacing: 0.08em; cursor: pointer; width: 100%;">Return to Home</button>
+        <button id="success-home-btn" style="background: var(--navy, #151d30); color: #ffffff; border: none; border-radius: 999px; padding: 14px 32px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; width: 100%;">Return to Home</button>
       </div>
     </div>
 
@@ -58,6 +59,7 @@
         document.addEventListener("DOMContentLoaded", () => {
           cartItem = window.readCart();
           renderCheckoutLayout();
+          AdManager.enableAndDisplay();
         });
 
         function renderCheckoutLayout() {
@@ -83,50 +85,50 @@
           const finalTotal = subtotal - discountVal;
 
           mount.innerHTML = `
-            <div class="checkout-grid" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; margin-top: 30px;">
+            <div class="checkout-layout-wrap" style="display: flex; flex-wrap: wrap; gap: 32px; margin-top: 30px; align-items: start;">
               
               <!-- Form Panel -->
-              <section class="checkout-form-panel" style="background: #fff; padding: 32px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid var(--line);">
+              <section class="checkout-form-panel" style="flex: 1; min-width: min(100%, 550px); background: #fff; padding: 24px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid var(--line);">
                 <p class="eyebrow gold" style="margin: 0 0 8px 0;">Information</p>
-                <h2 style="fontFamily: 'Cormorant Garamond', serif; fontSize: 28px; margin: 0 0 24px 0; color: var(--navy);">Billing Details</h2>
+                <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 28px; margin: 0 0 24px 0; color: var(--navy);">Billing Details</h2>
                 
                 <form id="checkout-form" style="display: flex; flex-direction: column; gap: 16px;">
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div>
+                  <div class="form-row-2col" style="display: flex; flex-wrap: wrap; gap: 16px;">
+                    <div style="flex: 1; min-width: min(100%, 200px);">
                       <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">First Name</label>
-                      <input id="inp-first" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" value="Keval" />
+                      <input id="inp-first" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" />
                     </div>
-                    <div>
+                    <div style="flex: 1; min-width: min(100%, 200px);">
                       <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">Last Name</label>
-                      <input id="inp-last" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" value="Raval" />
+                      <input id="inp-last" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';"  />
                     </div>
                   </div>
                   <div>
                     <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">Phone Number</label>
-                    <input id="inp-phone" type="tel" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" value="8288000000" />
+                    <input id="inp-phone" type="tel" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" />
                   </div>
                   <div>
                     <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">Street Address</label>
-                    <input id="inp-address" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" value="123 Premium Fashion street" />
+                    <input id="inp-address" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';"  />
                   </div>
-                  <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px;">
-                    <div>
+                  <div class="form-row-2col" style="display: flex; flex-wrap: wrap; gap: 16px;">
+                    <div style="flex: 1.2; min-width: min(100%, 200px);">
                       <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">State / City</label>
-                      <input id="inp-city" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" value="Gujarat" />
+                      <input id="inp-city" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';"  />
                     </div>
-                    <div>
+                    <div style="flex: 0.8; min-width: min(100%, 140px);">
                       <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">Pin Code</label>
-                      <input id="inp-pin" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" value="380001" />
+                      <input id="inp-pin" type="text" required style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Manrope';" />
                     </div>
                   </div>
                   
-                  <button type="submit" style="margin-top: 15px; background: var(--navy); color: #fff; border: none; padding: 14px 28px; border-radius: 999px; font-size: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 25px rgba(21, 29, 48, 0.15);">Place Order</button>
+                  <button type="submit" style="margin-top: 15px; background: var(--navy); color: #fff; border: none; padding: 14px 28px; border-radius: 999px; font-size: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 25px rgba(21, 29, 48, 0.15); width: 100%;">Place Order</button>
                 </form>
               </section>
 
               <!-- Order Summary Sidebar -->
-              <aside class="checkout-summary-sidebar" style="background: var(--paper); padding: 32px; border-radius: 20px; border: 1px solid var(--line);">
-                <h3 style="fontFamily: 'Cormorant Garamond', serif; fontSize: 22px; margin: 0 0 20px 0; color: var(--navy);">Order Summary</h3>
+              <aside class="checkout-summary-sidebar" style="flex: 1; min-width: min(100%, 300px); background: var(--paper); padding: 24px; border-radius: 20px; border: 1px solid var(--line);">
+                <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 22px; margin: 0 0 20px 0; color: var(--navy);">Order Summary</h3>
                 <div style="display: flex; gap: 16px; margin-bottom: 20px;">
                   <img src="${cartItem.image}" alt="${cartItem.name}" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line);" />
                   <div>

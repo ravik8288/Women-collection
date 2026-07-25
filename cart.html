@@ -14,6 +14,7 @@
     <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
     <script src="products-data.js"></script>
     <script src="data.js"></script>
+    <script src="js/ad-manager.js"></script>
     <script src="main.js"></script>
   </head>
   <body>
@@ -154,8 +155,11 @@
           });
 
           // Render page-level display ad
-          window.renderAdSlot("banner2", "div-gpt-ad-1782805720228-0");
-          window.renderAdSlot("banner3", "div-gpt-ad-cart-sidebar");
+          AdManager.renderBanner("banner2", "div-gpt-ad-1782805720228-0");
+          AdManager.renderBanner("banner3", "div-gpt-ad-cart-sidebar");
+
+          // Enable GPT services (anchor + banners)
+          AdManager.enableAndDisplay();
         }
 
         function changeQuantity(nextQuantity) {

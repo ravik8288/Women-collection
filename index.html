@@ -17,56 +17,15 @@
     <!-- Load Storefront Data & Scripts -->
     <script src="products-data.js"></script>
     <script src="data.js"></script>
+    <script src="js/ad-manager.js"></script>
     <script src="main.js"></script>
   </head>
   <body>
     <div id="root">
       <!-- Shared Header mounts here -->
       <div id="header-mount"></div>
-
-      <!-- Hero Section -->
-      <section class="hero container">
-        <div class="hero-copy">
-          <p class="eyebrow gold">Curated festive fashion</p>
-          <h1>A premium storefront for statement lehenga and occasion wear.</h1>
-          <p>women.collection.in Market Place, E-Commerce, Buy new fashion</p>
-          <div class="button-row">
-            <a class="button gold-button" href="#featured-products">Explore Collection</a>
-            <a class="button outline-button" href="about.html">Our Story</a>
-          </div>
-          <div class="hero-facts">
-            <div><span>Style Direction</span><b>Editorial, polished, modern</b></div>
-            <div><span>Palette</span><b>Midnight, champagne, ivory</b></div>
-            <div><span>Experience</span><b>Premium browsing to checkout</b></div>
-          </div>
-        </div>
-        <div class="hero-art">
-          <img src="images/hero.png" alt="Premium fashion showcase" id="hero-img" />
-          <div>
-            <span>Premium storefront refresh</span>
-            <p>Designed to feel refined, current, and high-value at first glance.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Feature Strip Section -->
-      <section class="feature-strip container">
-        <div>
-          <p class="eyebrow gold">New visual identity</p>
-          <h2>A more premium first impression</h2>
-          <p>Sharper typography, professional colors, and calmer spacing help the brand look newer and more trustworthy.</p>
-        </div>
-        <div>
-          <p class="eyebrow gold">Made for conversion</p>
-          <h2>Clear browsing flow</h2>
-          <p>Product cards, buttons, and category navigation are visually stronger and easier to scan.</p>
-        </div>
-        <div>
-          <p class="eyebrow gold">Consistent tone</p>
-          <h2>Premium from start to finish</h2>
-          <p>The same design language carries through product details, cart, information, and checkout.</p>
-        </div>
-      </section>
+    <img  src="images/hero.png" alt="Premium fashion showcase" id="hero-img" style="display: none;" />
+         
 
       <!-- Featured Catalog Section -->
       <section id="featured-products" class="collection container">
@@ -86,34 +45,32 @@
         <div class="pagination" id="pagination-controls"></div>
       </section>
 
-      <!-- Shared Footer mounts here -->
-      <div id="footer-mount"></div>
     </div>
 
     <!-- 1. Google Rewarded Ad Overlay UI -->
-    <div id="reward-ad-prompt" style="position: fixed; inset: 0; backgroundColor: rgba(21, 29, 48, 0.75); zIndex: 9999999; display: none; alignItems: center; justifyContent: center; backdropFilter: blur(8px); padding: 20px; font-family: 'Manrope', sans-serif;">
-      <div style="width: 100%; maxWidth: 400px; backgroundColor: #ffffff; borderRadius: 24px; padding: 32px; textAlign: center; boxShadow: 0 20px 50px rgba(0,0,0,0.3);">
-        <span style="fontSize: 10px; background: rgba(185,138,75,0.12); color: var(--gold, #b98a4b); padding: 5px 12px; borderRadius: 12px; fontWeight: 700; letterSpacing: 0.1em;">EXCLUSIVE SPONSOR OFFER</span>
-        <h3 style="fontFamily: 'Cormorant Garamond', serif; fontSize: 26px; color: var(--navy, #151d30); margin: 16px 0 8px 0; fontWeight: 600;">Unlock 15% Discount</h3>
-        <p style="fontSize: 13px; color: var(--muted, #60738f); lineHeight: 1.6; margin: 0 0 24px 0;">Watch a brief sponsor presentation to receive an exclusive checkout code and explore premium festive outfits.</p>
-        <div style="display: flex; flexDirection: column; gap: 10px;">
-          <button id="watch-sponsor-btn" style="background: var(--navy, #151d30); color: #ffffff; border: none; borderRadius: 999px; padding: 14px 28px; fontSize: 12px; fontWeight: 700; textTransform: uppercase; letterSpacing: 0.08em; cursor: pointer; boxShadow: 0 6px 16px rgba(21, 29, 48, 0.2);">🎥 WATCH SPONSOR AD</button>
-          <button id="close-prompt-btn" style="background: transparent; color: var(--muted, #60738f); border: none; padding: 8px; fontSize: 12px; cursor: pointer; textDecoration: underline;">No thanks, keep browsing</button>
+    <div id="reward-ad-prompt" style="position: fixed; inset: 0; background-color: rgba(21, 29, 48, 0.75); z-index: 9999999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; font-family: 'Manrope', sans-serif;">
+      <div style="width: 100%; max-width: 400px; background-color: #ffffff; border-radius: 24px; padding: 32px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+        <span style="font-size: 10px; background: rgba(185,138,75,0.12); color: var(--gold, #b98a4b); padding: 5px 12px; border-radius: 12px; font-weight: 700; letter-spacing: 0.1em;">EXCLUSIVE SPONSOR OFFER</span>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--navy, #151d30); margin: 16px 0 8px 0; font-weight: 600;">Unlock 15% Discount</h3>
+        <p style="font-size: 13px; color: var(--muted, #60738f); line-height: 1.6; margin: 0 0 24px 0;">Watch a brief sponsor presentation to receive an exclusive checkout code and explore premium festive outfits.</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button id="watch-sponsor-btn" style="background: var(--navy, #151d30); color: #ffffff; border: none; border-radius: 999px; padding: 14px 28px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; box-shadow: 0 6px 16px rgba(21, 29, 48, 0.2);">🎥 WATCH SPONSOR AD</button>
+          <button id="close-prompt-btn" style="background: transparent; color: var(--muted, #60738f); border: none; padding: 8px; font-size: 12px; cursor: pointer; text-decoration: underline;">No thanks, keep browsing</button>
         </div>
       </div>
     </div>
 
     <!-- 2. Reward Success Dialog -->
-    <div id="reward-success-dialog" style="position: fixed; inset: 0; backgroundColor: rgba(21, 29, 48, 0.8); zIndex: 9999999; display: none; alignItems: center; justifyContent: center; backdropFilter: blur(10px); padding: 20px; font-family: 'Manrope', sans-serif;">
-      <div style="width: 100%; maxWidth: 400px; backgroundColor: #ffffff; borderRadius: 24px; padding: 36px; textAlign: center; boxShadow: 0 25px 60px rgba(0,0,0,0.45);">
-        <div style="fontSize: 40px; marginBottom: 12px;">🎉</div>
-        <h3 style="fontFamily: 'Cormorant Garamond', serif; fontSize: 28px; color: var(--navy, #151d30); margin: 0 0 8px 0; fontWeight: 600;">Coupon Unlocked!</h3>
-        <p style="fontSize: 13px; color: var(--muted, #60738f); lineHeight: 1.5; margin: 0 0 20px 0;">Thank you for supporting our storefront sponsors. Use the promo code below at checkout for 15% off.</p>
-        <div id="copy-code-btn" style="background: rgba(185,138,75,0.06); border: 1.5px dashed var(--gold, #b98a4b); borderRadius: 16px; padding: 16px; margin: 0 0 24px 0; cursor: pointer; position: relative;">
-          <span style="fontSize: 20px; fontWeight: 800; letterSpacing: 0.15em; color: var(--gold, #b98a4b);">FESTIVE15</span>
-          <div id="copy-badge" style="fontSize: 10px; color: var(--muted, #60738f); marginTop: 4px;">Click to copy code</div>
+    <div id="reward-success-dialog" style="position: fixed; inset: 0; background-color: rgba(21, 29, 48, 0.8); z-index: 9999999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; font-family: 'Manrope', sans-serif;">
+      <div style="width: 100%; max-width: 400px; background-color: #ffffff; border-radius: 24px; padding: 36px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.45);">
+        <div style="font-size: 40px; margin-bottom: 12px;">🎉</div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--navy, #151d30); margin: 0 0 8px 0; font-weight: 600;">Coupon Unlocked!</h3>
+        <p style="font-size: 13px; color: var(--muted, #60738f); line-height: 1.5; margin: 0 0 20px 0;">Thank you for supporting our storefront sponsors. Use the promo code below at checkout for 15% off.</p>
+        <div id="copy-code-btn" style="background: rgba(185,138,75,0.06); border: 1.5px dashed var(--gold, #b98a4b); border-radius: 16px; padding: 16px; margin: 0 0 24px 0; cursor: pointer; position: relative;">
+          <span style="font-size: 20px; font-weight: 800; letter-spacing: 0.15em; color: var(--gold, #b98a4b);">FESTIVE15</span>
+          <div id="copy-badge" style="font-size: 10px; color: var(--muted, #60738f); margin-top: 4px;">Click to copy code</div>
         </div>
-        <button id="success-close-btn" style="background: var(--navy, #151d30); color: #ffffff; border: none; borderRadius: 999px; padding: 14px 32px; fontSize: 12px; fontWeight: 700; textTransform: uppercase; letterSpacing: 0.08em; cursor: pointer; width: 100%;">Start Shopping</button>
+        <button id="success-close-btn" style="background: var(--navy, #151d30); color: #ffffff; border: none; border-radius: 999px; padding: 14px 32px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; width: 100%;">Start Shopping</button>
       </div>
     </div>
 
@@ -201,13 +158,8 @@
           initializeHomepageRewardedAd();
         });
 
-        // NATIVE GOOGLE REWARDED AD LIFE-CYCLE SETUP
-        let rewardedAdEvent = null;
-
+        // REWARDED AD — delegates to AdManager
         function initializeHomepageRewardedAd() {
-          const googletag = window.googletag || { cmd: [] };
-          let rewardedSlot = null;
-
           const prompt = document.getElementById("reward-ad-prompt");
           const watchBtn = document.getElementById("watch-sponsor-btn");
           const closeBtn = document.getElementById("close-prompt-btn");
@@ -216,87 +168,78 @@
           const copyCodeBtn = document.getElementById("copy-code-btn");
           const copyBadge = document.getElementById("copy-badge");
 
-          googletag.cmd.push(() => {
-            if (!window.gptInitialized) {
-              googletag.pubads().enableSingleRequest();
-              googletag.enableServices();
-              window.gptInitialized = true;
-            }
+          // Show the coupon offer popup instantly on page load
+          prompt.style.display = "flex";
 
-            const adPath = window.AD_SLOT_PATHS.rewarded;
-            if (!adPath) return;
+          let watchClicked = false;
 
-            // Clear previous rewarded slots
-            const existingSlots = googletag.pubads().getSlots();
-            const existingRewarded = existingSlots.find(s => s.getSlotPath() === adPath);
-            if (existingRewarded) {
-              googletag.destroySlots([existingRewarded]);
-            }
-
-            googletag.pubads().addEventListener("rewardedSlotReady", (event) => {
-              console.log("Homepage Rewarded: Ad loaded and ready.");
-              rewardedAdEvent = event;
-              // Show prompt immediately on load
-              prompt.style.display = "flex";
-            });
-
-            googletag.pubads().addEventListener("rewardedSlotGranted", (event) => {
-              console.log("Homepage Rewarded: Reward granted.");
+          // Initialize rewarded ad via AdManager
+          const rewardedControl = AdManager.initRewarded({
+            onReady(event) {
+              // If user already clicked watch while buffering, show it now
+              if (watchClicked) {
+                prompt.style.display = "none";
+                event.makeRewardedVisible();
+              }
+            },
+            onGranted() {
               prompt.style.display = "none";
               successDialog.style.display = "flex";
-            });
-
-            googletag.pubads().addEventListener("rewardedSlotClosed", () => {
-              console.log("Homepage Rewarded: Ad slot closed.");
+            },
+            onClosed() {
               prompt.style.display = "none";
-              if (rewardedSlot) {
-                googletag.destroySlots([rewardedSlot]);
-              }
-            });
-
-            rewardedSlot = googletag.defineOutOfPageSlot(
-              adPath,
-              googletag.enums.OutOfPageFormat.REWARDED
-            );
-
-            if (rewardedSlot) {
-              rewardedSlot.addService(googletag.pubads());
-              googletag.display(rewardedSlot);
-              googletag.pubads().refresh([rewardedSlot]);
+              watchClicked = false;
             }
           });
 
-          // Watch ad button
+          // Enable services and display the rewarded slot
+          AdManager.enableAndDisplay();
+          rewardedControl.display();
+
+          // Watch ad button handler
           if (watchBtn) {
             watchBtn.addEventListener("click", () => {
-              if (rewardedAdEvent) {
+              watchClicked = true;
+              if (rewardedControl.isReady()) {
                 prompt.style.display = "none";
-                rewardedAdEvent.makeRewardedVisible();
+                rewardedControl.makeVisible();
+              } else {
+                // Ad is still buffering, show loading state
+                watchBtn.innerText = "⏳ Preparing video...";
+                watchBtn.disabled = true;
+                watchBtn.style.background = "#4a5368";
+                watchBtn.style.cursor = "not-allowed";
+
+                // Fallback: if ad doesn't load within 5s, grant reward anyway
+                setTimeout(() => {
+                  if (!rewardedControl.isReady()) {
+                    console.log("Rewarded: Ad timed out, granting reward directly.");
+                    prompt.style.display = "none";
+                    successDialog.style.display = "flex";
+                  }
+                }, 5000);
               }
             });
           }
 
-          // Close prompt button
+          // Close prompt (no thanks)
           if (closeBtn) {
             closeBtn.addEventListener("click", () => {
               prompt.style.display = "none";
-              googletag.cmd.push(() => {
-                googletag.pubads().clear();
-              });
             });
           }
 
-          // Success Close button
+          // Success dialog close
           if (successCloseBtn) {
             successCloseBtn.addEventListener("click", () => {
               successDialog.style.display = "none";
             });
           }
 
-          // Copy Code
+          // Copy coupon code
           if (copyCodeBtn) {
             copyCodeBtn.addEventListener("click", () => {
-              navigator.clipboard.writeText("FESTIVE15");
+              navigator.clipboard.writeText("FESTIVE15").catch(() => {});
               copyBadge.innerText = "Copied! ✓";
               setTimeout(() => {
                 copyBadge.innerText = "Click to copy code";
