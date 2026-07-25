@@ -12,7 +12,32 @@
       rel="stylesheet"
     />
     <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
-    <script type="module" crossorigin src="/Women-collection/assets/index-BY20D73Q.js"></script>
+    <script>
+      window.googletag = window.googletag || { cmd: [] };
+      googletag.cmd.push(() => {
+        const isLocal = !new URLSearchParams(window.location.search).get("live_ads") && (
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1" ||
+          window.location.hostname === "" ||
+          window.location.protocol === "file:" ||
+          /^192\.168\./.test(window.location.hostname) ||
+          /^10\./.test(window.location.hostname) ||
+          window.location.hostname.endsWith(".local")
+        );
+        const anchorPath = isLocal 
+          ? "/6355419/Travel" 
+          : "/22846411849,23358456112/JBM_parivahanindia.com_Anchor_new";
+
+        window.globalAnchorSlot = googletag.defineOutOfPageSlot(
+          anchorPath,
+          googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+        );
+        if (window.globalAnchorSlot) {
+          window.globalAnchorSlot.addService(googletag.pubads());
+        }
+      });
+    </script>
+    <script type="module" crossorigin src="/Women-collection/assets/index-CJA2PAFS.js"></script>
     <link rel="stylesheet" crossorigin href="/Women-collection/assets/index-uarMVMSb.css">
   </head>
   <body>
