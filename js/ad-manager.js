@@ -44,11 +44,27 @@ window.AdManager = (function () {
     });
   }
 
-  /** Default render callback — hides the container when the ad is empty. */
+  /** Default render callback — hides container when empty (or shows placeholder in local test). */
   function defaultEmptyHandler(containerId, event) {
     if (!event.isEmpty) return;
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    if (window.isLocalTest) {
+      container.style.display = "flex";
+      container.style.alignItems = "center";
+      container.style.justifyContent = "center";
+      container.style.background = "#f1f5f9";
+      container.style.border = "1px dashed #cbd5e1";
+      container.style.borderRadius = "8px";
+      container.style.padding = "10px";
+      container.style.color = "#64748b";
+      container.style.fontSize = "12px";
+      container.style.fontFamily = "sans-serif";
+      container.innerHTML = `📢 Ad Placeholder [${containerId}] (Google Test Slot — No Fill)`;
+      return;
+    }
+
     container.style.display = "none";
     const wrapper = container.parentElement;
     if (
@@ -212,6 +228,7 @@ window.AdManager = (function () {
      */
     enableAndDisplay() {
       googletag.cmd.push(() => {
+        console.log("AdManager: enableAndDisplay triggered. Services enabled:", _servicesEnabled);
         if (!_servicesEnabled) {
           googletag.pubads().enableSingleRequest();
           googletag.enableServices();
@@ -220,11 +237,13 @@ window.AdManager = (function () {
 
         // Display anchor slot
         if (_anchorSlot) {
+          console.log("AdManager: Displaying anchor slot.");
           googletag.display(_anchorSlot);
         }
 
         // Display pending out-of-page slots (interstitial, etc.)
         for (var i = 0; i < _outOfPageSlots.length; i++) {
+          console.log("AdManager: Displaying out-of-page slot:", _outOfPageSlots[i]);
           googletag.display(_outOfPageSlots[i]);
         }
         _outOfPageSlots.length = 0;
@@ -232,6 +251,7 @@ window.AdManager = (function () {
         // Display + refresh pending banner slots
         for (var j = 0; j < _pendingBanners.length; j++) {
           var b = _pendingBanners[j];
+          console.log("AdManager: Displaying banner slot:", b.containerId);
           googletag.display(b.containerId);
           googletag.pubads().refresh([b.slot]);
         }
@@ -262,7 +282,12 @@ window.AdManager = (function () {
       googletag.cmd.push(() => {
         var adPath = window.AD_SLOT_PATHS && window.AD_SLOT_PATHS[type];
         var adSizes = window.AD_SLOT_SIZES && window.AD_SLOT_SIZES[type];
-        if (!adPath || !adSizes) return;
+        if (!adPath || !adSizes) {
+          console.warn("AdManager: Missing slot config for type:", type);
+          return;
+        }
+
+        console.log("AdManager: Defining slot type:", type, "path:", adPath, "container:", containerId);
 
         // Destroy any existing slot with the same container ID
         var existingSlots = googletag.pubads().getSlots();
@@ -274,7 +299,10 @@ window.AdManager = (function () {
         }
 
         var slot = googletag.defineSlot(adPath, adSizes, containerId);
-        if (!slot) return;
+        if (!slot) {
+          console.warn("AdManager: defineSlot returned null for container:", containerId);
+          return;
+        }
 
         slot.addService(googletag.pubads());
         _managedSlots[containerId] = slot;
@@ -288,6 +316,15 @@ window.AdManager = (function () {
           _pendingBanners.push({ containerId: containerId, slot: slot });
         }
       });
+
+      // Auto-trigger enableAndDisplay after stack clears if DOM is ready
+      if (!_servicesEnabled) {
+        setTimeout(() => {
+          if (!_servicesEnabled && _pendingBanners.length > 0) {
+            AdManager.enableAndDisplay();
+          }
+        }, 50);
+      }
     },
 
     /**

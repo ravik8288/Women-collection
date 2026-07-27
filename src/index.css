@@ -1760,13 +1760,14 @@ h4,
   font-size: 24px;
 }
 .card-row > a {
-  text-transform: none;
-  letter-spacing: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   border: 1px solid var(--gold);
-  padding: 12px 21px;
-  font-size: 12px;
+  padding: 8px 14px;
+  font-size: 11px;
   font-weight: 700;
-  box-shadow: 0 12px 25px #151d3020;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px #151d3015;
 }
 .pagination {
   gap: 10px;
@@ -1881,6 +1882,11 @@ footer {
   }
   .card-row strong {
     font-size: 19px;
+  }
+  .card-row > a {
+    padding: 5px 10px;
+    font-size: 9px;
+    letter-spacing: 0.03em;
   }
   .section-head h2 {
     font-size: 40px;
@@ -4582,8 +4588,12 @@ footer .footer-bottom {
   border-radius: 999px;
   justify-content: center;
   align-items: center;
-  min-width: 110px;
-  padding: 12px 20px;
+  min-width: 90px;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   display: inline-flex;
 }
 .category-product-card .card-row > a span {
@@ -4646,7 +4656,8 @@ footer .footer-bottom {
   }
   .category-product-card .card-row > a {
     min-width: 0;
-    padding: 10px 13px;
+    padding: 5px 10px;
+    font-size: 9px;
   }
   .category-pagination {
     flex-wrap: wrap;

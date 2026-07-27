@@ -18,6 +18,7 @@
     injectHeader();
     injectFooter();
     updateCartCount();
+    AdManager.enableAndDisplay();
 
     // Listen to custom cart update events
     window.addEventListener("cartUpdated", updateCartCount);
