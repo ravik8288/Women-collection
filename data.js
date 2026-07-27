@@ -115,26 +115,26 @@
         footerBanner: "/6355419/Travel/Europe/France",
       }
     : {
-        banner1: "/22846411849,23358456112/JBM_parivahanindia.com_Banner1_new",
-        banner2: "/22846411849,23358456112/JBM_parivahanindia.com_Banner2_new",
-        banner3: "/22846411849,23358456112/JBM_parivahanindia.com_Banner2_new",
-        interstitial: "/22846411849,23358456112/JBM_parivahanindia.com_Inter_new",
-        anchor: "/22846411849,23358456112/JBM_parivahanindia.com_Anchor_new",
-        rewarded: "/22846411849,23358456112/JBM_parivahanindia.com_Rewarded_new",
-        sponsorBanner: "/22846411849,23358456112/JBM_parivahanindia.com_Banner1_new",
-        headerBanner: "/22846411849,23358456112/JBM_parivahanindia.com_Banner1_new",
-        footerBanner: "/22846411849,23358456112/JBM_parivahanindia.com_Banner2_new",
+        banner1: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_Banner",
+        banner2: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_Banner2",
+        banner3: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_Banner2",
+        interstitial: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_inter",
+        anchor: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_anchor",
+        rewarded: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_rewarded",
+        sponsorBanner: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_Banner",
+        headerBanner: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_Banner",
+        footerBanner: "/22846411849,23358456112/23358456112_shoping.parivahanindia.com_Banner2",
       };
 
   window.AD_SLOT_SIZES = {
-    banner1: [[300, 250], [336, 280], "fluid"],
+    banner1: ["fluid", [336, 280], [300, 250]],
     banner2: [[300, 250], [336, 280], "fluid"],
     banner3: [[300, 250], [336, 280], "fluid"],
-    interstitial: [[1, 1], [300, 250], [320, 480], [480, 320], [336, 280]],
-    anchor: [[320, 50], [728, 90], [320, 100], "fluid"],
-    rewarded: [[480, 320], [300, 100], [300, 75], [300, 50], [320, 480]],
-    sponsorBanner: [[300, 250], [336, 280], "fluid"],
-    headerBanner: [[300, 250], [336, 280], "fluid"],
+    interstitial: [[480, 320], [1, 1], [300, 250], [320, 480], [336, 280]],
+    anchor: [[320, 50], [728, 90], [320, 100], [1, 1], "fluid"],
+    rewarded: [[320, 480], [480, 320], [300, 50], [300, 75], [300, 100]],
+    sponsorBanner: ["fluid", [336, 280], [300, 250]],
+    headerBanner: ["fluid", [336, 280], [300, 250]],
     footerBanner: [[300, 250], [336, 280], "fluid"],
   };
 
