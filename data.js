@@ -127,15 +127,15 @@
       };
 
   window.AD_SLOT_SIZES = {
-    banner1: ["fluid", [336, 280], [300, 250]],
-    banner2: [[300, 250], [336, 280], "fluid"],
-    banner3: [[300, 250], [336, 280], "fluid"],
+    banner1: ['fluid', [336, 280], [300, 250]],
+    banner2: [[300, 250], [336, 280], 'fluid'],
+    banner3: [[300, 250], [336, 280], 'fluid'],
     interstitial: [[480, 320], [1, 1], [300, 250], [320, 480], [336, 280]],
-    anchor: [[320, 50], [728, 90], [320, 100], [1, 1], "fluid"],
+    anchor: [[1, 1], [320, 50], [728, 90], [320, 100], 'fluid'],
     rewarded: [[320, 480], [480, 320], [300, 50], [300, 75], [300, 100]],
-    sponsorBanner: ["fluid", [336, 280], [300, 250]],
-    headerBanner: ["fluid", [336, 280], [300, 250]],
-    footerBanner: [[300, 250], [336, 280], "fluid"],
+    sponsorBanner: ['fluid', [336, 280], [300, 250]],
+    headerBanner: ['fluid', [336, 280], [300, 250]],
+    footerBanner: [[300, 250], [336, 280], 'fluid'],
   };
 
   console.log("Storefront Data initialized. Environment: " + (window.isLocalTest ? "Local Test" : "Production Live"));

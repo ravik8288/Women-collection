@@ -102,17 +102,20 @@ window.AdManager = (function () {
         const path = window.AD_SLOT_PATHS && window.AD_SLOT_PATHS.anchor;
         if (!path) return;
 
-        _anchorSlot = window.googletag.defineOutOfPageSlot(
-          path,
-          document.body.clientWidth <= 500
-            ? window.googletag.enums.OutOfPageFormat.TOP_ANCHOR
-            : window.googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
-        );
+        if (window.isLocalTest) {
+          _anchorSlot = window.googletag.defineOutOfPageSlot(
+            path,
+            document.body.clientWidth <= 500
+              ? window.googletag.enums.OutOfPageFormat.TOP_ANCHOR
+              : window.googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+          );
+        } else {
+          // Live GAM Network unit 23358456112_shoping.parivahanindia.com_anchor
+          _anchorSlot = window.googletag.defineSlot(path, [1, 1], 'div-gpt-ad-1785148050440-0');
+        }
 
         if (_anchorSlot) {
-          _anchorSlot.addService(window.googletag.pubads()).setConfig({
-            targeting: { test: "anchor" },
-          });
+          _anchorSlot.addService(window.googletag.pubads());
         }
       });
     },
