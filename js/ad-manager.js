@@ -16,7 +16,11 @@
 window.AdManager = (function () {
   "use strict";
 
-  const googletag = window.googletag || { cmd: [] };
+  // Dynamic accessor for window.googletag (handles async loading of gpt.js)
+  function getGoogletag() {
+    window.googletag = window.googletag || { cmd: [] };
+    return window.googletag;
+  }
 
   // --- Private State ---
   let _servicesEnabled = false;
@@ -35,8 +39,9 @@ window.AdManager = (function () {
     if (_listenersRegistered) return;
     _listenersRegistered = true;
 
-    googletag.cmd.push(() => {
-      googletag.pubads().addEventListener("slotRenderEnded", (event) => {
+    const gt = getGoogletag();
+    gt.cmd.push(() => {
+      window.googletag.pubads().addEventListener("slotRenderEnded", (event) => {
         const id = event.slot.getSlotElementId();
         const cb = _renderCallbacks[id];
         if (cb) cb(event);
@@ -92,19 +97,20 @@ window.AdManager = (function () {
      * Must be called before enableAndDisplay().
      */
     initAnchor() {
-      googletag.cmd.push(() => {
+      const gt = getGoogletag();
+      gt.cmd.push(() => {
         const path = window.AD_SLOT_PATHS && window.AD_SLOT_PATHS.anchor;
         if (!path) return;
 
-        _anchorSlot = googletag.defineOutOfPageSlot(
+        _anchorSlot = window.googletag.defineOutOfPageSlot(
           path,
           document.body.clientWidth <= 500
-            ? googletag.enums.OutOfPageFormat.TOP_ANCHOR
-            : googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+            ? window.googletag.enums.OutOfPageFormat.TOP_ANCHOR
+            : window.googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
         );
 
         if (_anchorSlot) {
-          _anchorSlot.addService(googletag.pubads()).setConfig({
+          _anchorSlot.addService(window.googletag.pubads()).setConfig({
             targeting: { test: "anchor" },
           });
         }
@@ -116,18 +122,19 @@ window.AdManager = (function () {
      * Must be called before enableAndDisplay().
      */
     initInterstitial() {
-      googletag.cmd.push(() => {
+      const gt = getGoogletag();
+      gt.cmd.push(() => {
         const path =
           window.AD_SLOT_PATHS && window.AD_SLOT_PATHS.interstitial;
         if (!path) return;
 
-        const slot = googletag.defineOutOfPageSlot(
+        const slot = window.googletag.defineOutOfPageSlot(
           path,
-          googletag.enums.OutOfPageFormat.INTERSTITIAL
+          window.googletag.enums.OutOfPageFormat.INTERSTITIAL
         );
 
         if (slot) {
-          slot.addService(googletag.pubads()).setConfig({
+          slot.addService(window.googletag.pubads()).setConfig({
             interstitial: {
               triggers: {
                 navBar: true,
@@ -155,24 +162,25 @@ window.AdManager = (function () {
       let rewardedSlot = null;
       let rewardedEvent = null;
 
-      googletag.cmd.push(() => {
+      const gt = getGoogletag();
+      gt.cmd.push(() => {
         // Register rewarded-specific event listeners
-        googletag.pubads().addEventListener("rewardedSlotReady", (event) => {
+        window.googletag.pubads().addEventListener("rewardedSlotReady", (event) => {
           console.log("Rewarded: Ad ready.");
           rewardedEvent = event;
           if (callbacks.onReady) callbacks.onReady(event);
         });
 
-        googletag.pubads().addEventListener("rewardedSlotGranted", () => {
+        window.googletag.pubads().addEventListener("rewardedSlotGranted", () => {
           console.log("Rewarded: Reward granted.");
           if (callbacks.onGranted) callbacks.onGranted();
         });
 
-        googletag.pubads().addEventListener("rewardedSlotClosed", () => {
+        window.googletag.pubads().addEventListener("rewardedSlotClosed", () => {
           console.log("Rewarded: Closed.");
           if (callbacks.onClosed) callbacks.onClosed();
           if (rewardedSlot) {
-            googletag.destroySlots([rewardedSlot]);
+            window.googletag.destroySlots([rewardedSlot]);
             rewardedSlot = null;
           }
         });
@@ -181,14 +189,14 @@ window.AdManager = (function () {
         var path = window.AD_SLOT_PATHS && window.AD_SLOT_PATHS.rewarded;
         if (!path) return;
 
-        rewardedSlot = googletag.defineOutOfPageSlot(
+        rewardedSlot = window.googletag.defineOutOfPageSlot(
           path,
-          googletag.enums.OutOfPageFormat.REWARDED
+          window.googletag.enums.OutOfPageFormat.REWARDED
         );
 
         if (rewardedSlot) {
           console.log("Rewarded: Slot created successfully.");
-          rewardedSlot.addService(googletag.pubads());
+          rewardedSlot.addService(window.googletag.pubads());
         } else {
           console.warn(
             "Rewarded: defineOutOfPageSlot returned null — " +
@@ -201,10 +209,11 @@ window.AdManager = (function () {
       return {
         /** Display and refresh the rewarded slot. Call after enableAndDisplay(). */
         display: function () {
-          googletag.cmd.push(() => {
+          const gtInner = getGoogletag();
+          gtInner.cmd.push(() => {
             if (rewardedSlot) {
-              googletag.display(rewardedSlot);
-              googletag.pubads().refresh([rewardedSlot]);
+              window.googletag.display(rewardedSlot);
+              window.googletag.pubads().refresh([rewardedSlot]);
               console.log("Rewarded: Slot displayed and refresh requested.");
             }
           });
@@ -227,24 +236,25 @@ window.AdManager = (function () {
      * Safe to call multiple times — enableServices() only runs once.
      */
     enableAndDisplay() {
-      googletag.cmd.push(() => {
+      const gt = getGoogletag();
+      gt.cmd.push(() => {
         console.log("AdManager: enableAndDisplay triggered. Services enabled:", _servicesEnabled);
         if (!_servicesEnabled) {
-          googletag.pubads().enableSingleRequest();
-          googletag.enableServices();
+          window.googletag.pubads().enableSingleRequest();
+          window.googletag.enableServices();
           _servicesEnabled = true;
         }
 
         // Display anchor slot
         if (_anchorSlot) {
           console.log("AdManager: Displaying anchor slot.");
-          googletag.display(_anchorSlot);
+          window.googletag.display(_anchorSlot);
         }
 
         // Display pending out-of-page slots (interstitial, etc.)
         for (var i = 0; i < _outOfPageSlots.length; i++) {
           console.log("AdManager: Displaying out-of-page slot:", _outOfPageSlots[i]);
-          googletag.display(_outOfPageSlots[i]);
+          window.googletag.display(_outOfPageSlots[i]);
         }
         _outOfPageSlots.length = 0;
 
@@ -252,8 +262,8 @@ window.AdManager = (function () {
         for (var j = 0; j < _pendingBanners.length; j++) {
           var b = _pendingBanners[j];
           console.log("AdManager: Displaying banner slot:", b.containerId);
-          googletag.display(b.containerId);
-          googletag.pubads().refresh([b.slot]);
+          window.googletag.display(b.containerId);
+          window.googletag.pubads().refresh([b.slot]);
         }
         _pendingBanners.length = 0;
       });
@@ -279,7 +289,8 @@ window.AdManager = (function () {
         if (hideOnEmpty) defaultEmptyHandler(containerId, event);
       };
 
-      googletag.cmd.push(() => {
+      const gt = getGoogletag();
+      gt.cmd.push(() => {
         var adPath = window.AD_SLOT_PATHS && window.AD_SLOT_PATHS[type];
         var adSizes = window.AD_SLOT_SIZES && window.AD_SLOT_SIZES[type];
         if (!adPath || !adSizes) {
@@ -290,27 +301,27 @@ window.AdManager = (function () {
         console.log("AdManager: Defining slot type:", type, "path:", adPath, "container:", containerId);
 
         // Destroy any existing slot with the same container ID
-        var existingSlots = googletag.pubads().getSlots();
+        var existingSlots = window.googletag.pubads().getSlots();
         for (var i = 0; i < existingSlots.length; i++) {
           if (existingSlots[i].getSlotElementId() === containerId) {
-            googletag.destroySlots([existingSlots[i]]);
+            window.googletag.destroySlots([existingSlots[i]]);
             break;
           }
         }
 
-        var slot = googletag.defineSlot(adPath, adSizes, containerId);
+        var slot = window.googletag.defineSlot(adPath, adSizes, containerId);
         if (!slot) {
           console.warn("AdManager: defineSlot returned null for container:", containerId);
           return;
         }
 
-        slot.addService(googletag.pubads());
+        slot.addService(window.googletag.pubads());
         _managedSlots[containerId] = slot;
 
         if (_servicesEnabled) {
           // Services already enabled — display + refresh immediately
-          googletag.display(containerId);
-          googletag.pubads().refresh([slot]);
+          window.googletag.display(containerId);
+          window.googletag.pubads().refresh([slot]);
         } else {
           // Queue for batch display after enableAndDisplay()
           _pendingBanners.push({ containerId: containerId, slot: slot });
@@ -332,9 +343,10 @@ window.AdManager = (function () {
      * @param {string} containerId
      */
     destroyBanner(containerId) {
-      googletag.cmd.push(() => {
+      const gt = getGoogletag();
+      gt.cmd.push(() => {
         if (_managedSlots[containerId]) {
-          googletag.destroySlots([_managedSlots[containerId]]);
+          window.googletag.destroySlots([_managedSlots[containerId]]);
           delete _managedSlots[containerId];
         }
         delete _renderCallbacks[containerId];
