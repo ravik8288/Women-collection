@@ -98,7 +98,6 @@
     window.location.hostname === "127.0.0.1" ||
     window.location.hostname === "" ||
     window.location.protocol === "file:" ||
-    window.location.hostname.endsWith(".github.io") ||
     /^192\.168\./.test(window.location.hostname) ||
     /^10\./.test(window.location.hostname) ||
     /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(window.location.hostname) ||
