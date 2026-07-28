@@ -90,17 +90,20 @@
   // Ad slot configuration environment resolver
   const forceProdAds = new URLSearchParams(window.location.search).get("live_ads") === "true" || 
                        new URLSearchParams(window.location.search).get("prod_ads") === "true";
+  const forceTestAds = new URLSearchParams(window.location.search).get("test_ads") === "true" ||
+                       new URLSearchParams(window.location.search).get("live_ads") === "false";
 
-  window.isLocalTest = !forceProdAds && (
+  window.isLocalTest = forceTestAds || (!forceProdAds && (
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1" ||
     window.location.hostname === "" ||
     window.location.protocol === "file:" ||
+    window.location.hostname.endsWith(".github.io") ||
     /^192\.168\./.test(window.location.hostname) ||
     /^10\./.test(window.location.hostname) ||
     /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(window.location.hostname) ||
     window.location.hostname.endsWith(".local")
-  );
+  ));
 
   window.AD_SLOT_PATHS = window.isLocalTest
     ? {
@@ -127,15 +130,15 @@
       };
 
   window.AD_SLOT_SIZES = {
-    banner1: ['fluid', [336, 280], [300, 250]],
-    banner2: [[300, 250], [336, 280], 'fluid'],
-    banner3: [[300, 250], [336, 280], 'fluid'],
+    banner1: [[300, 250], [336, 280]],
+    banner2: [[300, 250], [336, 280]],
+    banner3: [[300, 250], [336, 280]],
     interstitial: [[480, 320], [1, 1], [300, 250], [320, 480], [336, 280]],
-    anchor: [[1, 1], [320, 50], [728, 90], [320, 100], 'fluid'],
+    anchor: [[320, 50], [728, 90], [320, 100]],
     rewarded: [[320, 480], [480, 320], [300, 50], [300, 75], [300, 100]],
-    sponsorBanner: ['fluid', [336, 280], [300, 250]],
-    headerBanner: ['fluid', [336, 280], [300, 250]],
-    footerBanner: [[300, 250], [336, 280], 'fluid'],
+    sponsorBanner: [[300, 250], [336, 280]],
+    headerBanner: [[300, 250], [336, 280]],
+    footerBanner: [[300, 250], [336, 280]],
   };
 
   console.log("Storefront Data initialized. Environment: " + (window.isLocalTest ? "Local Test" : "Production Live"));
